@@ -21,15 +21,70 @@ sap.ui.getCore().attachInit(()=>{
 
     const f_sexo = new sap.m.Select({
         items: [
-            this.masc = new sap.ui.core.Item({
+            new sap.ui.core.Item({
                 key: 'M',
                 text: 'Masculino'
             }),
-            this.fem = new sap.ui.core.Item({
+            new sap.ui.core.Item({
                 key:'F',
                 text:'Feminino'
             })
         ]
+    })
+
+    const tabelaGrid = new sap.ui.table.Table({
+        title: "Tabela Grid",
+        visibleRowCount: 5,
+        columns: [
+            new sap.ui.table.Column({
+                label: new sap.m.Label({ text: "Nome" }),
+                template: new sap.m.Text()
+            }),
+            new sap.ui.table.Column({
+                label: new sap.m.Label({ text: "Idade" }),
+                template: new sap.m.Text()
+            }),
+            new sap.ui.table.Column({
+                label: new sap.m.Label({ text: "Altura" }),
+                template: new sap.m.Text()
+            }),
+            new sap.ui.table.Column({
+                label: new sap.m.Label({ text: "Sexo" }),
+                template: new sap.m.Text()
+            })
+        ]
+    })
+
+    const table = new sap.m.Table({
+
+        columns: [
+
+            new sap.m.Column({
+                header: new sap.m.Text({
+                text:'Nome'
+                })
+            }),
+
+            new sap.m.Column({
+                header: new sap.m.Text({
+                text:'Idade'
+                })
+            }),
+
+            new sap.m.Column({
+                header: new sap.m.Text({
+                text:'Altura'
+                })
+            }),
+
+            new sap.m.Column({
+                header: new sap.m.Text({
+                text:'Sexo'
+                })
+            })
+
+        ]
+
     })
 
     const btn_add = new sap.m.Button({
@@ -40,19 +95,27 @@ sap.ui.getCore().attachInit(()=>{
 
         press:()=>{
             const v_nome = f_nome.getValue()
-            const v_idade = f_idade.getValue()
-            const v_altura = f_altura.getValue()
+            const v_idade = Number(f_idade.getValue())
+            const v_altura = Number(f_altura.getValue())
             const temp = f_sexo.getSelectedItem()
             const v_sexo = temp.getText()
 
             if (v_nome === "" || v_idade === "" || v_altura === "") {
-
                 sap.m.MessageToast.show("Preencha todos os campos!")
-
                 return
             }
 
-            const linhas = new sap.m.ColumnListItem({
+            if (v_idade <= 0) {
+                sap.m.MessageToast.show("Informe uma idade válida")
+                return
+            }
+
+            if (v_altura <= 0) {
+                sap.m.MessageToast.show("Informe uma altura válida")
+                return
+            }
+
+            const linha = new sap.m.ColumnListItem({
                 cells: [
 
                     new sap.m.Text({
@@ -75,46 +138,31 @@ sap.ui.getCore().attachInit(()=>{
 
             })
 
-            table.addItem(linhas)
+            const linhaGrid = new sap.ui.table.Row({
+                cells: [
+                    new sap.m.Text({
+                        text: v_nome 
+                    }),
+                    new sap.m.Text({ 
+                        text: v_idade 
+                    }),
+                    new sap.m.Text({ 
+                        text: v_altura 
+                    }),
+                    new sap.m.Text({
+                        text: v_sexo 
+                    })
+                ]
+            })
+            tabelaGrid.addRow(linhaGrid)
+
+            table.addItem(linha)
 
             f_nome.setValue("")
             f_idade.setValue("")
             f_altura.setValue("")
 
         }
-
-
-    })
-
-    const table = new sap.m.Table({
-
-        columns: [
-
-            this.col_nome = new sap.m.Column({
-                header: new sap.m.Text({
-                    text:'Nome'
-                })
-            }),
-
-            this.col_idade = new sap.m.Column({
-                header: new sap.m.Text({
-                    text:'Idade'
-                })
-            }),
-
-            this.col_altura = new sap.m.Column({
-                header: new sap.m.Text({
-                    text:'Altura'
-                })
-            }),
-
-            this.col_sexo = new sap.m.Column({
-                header: new sap.m.Text({
-                    text:'Sexo'
-                })
-            })
-
-        ]
 
     })
 
@@ -126,7 +174,8 @@ sap.ui.getCore().attachInit(()=>{
             f_altura,
             f_sexo,
             btn_add,
-            table
+            table,
+            tabelaGrid
         ],
         width: '30%',
         rowGap: '10px'
