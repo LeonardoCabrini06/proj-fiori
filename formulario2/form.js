@@ -1,169 +1,191 @@
-sap.ui.getCore().attachInit(()=>{
+sap.ui.getCore().attachInit(() => {
+
+    const model = new sap.ui.model.json.JSONModel({
+        formulario: {
+            nome: "",
+            idade: "",
+            altura: "",
+            sexo: "M"
+        },
+        tabela: []
+    })
 
     const title = new sap.m.Title({
-        text: 'Formulário'
+        text: "Formulário"
     })
-
     const f_nome = new sap.m.Input({
-        placeholder: 'Digite seu nome',
-        type: 'Text'
+        placeholder: "Digite seu nome",
+        value: "{dados>/formulario/nome}"
     })
-
     const f_idade = new sap.m.Input({
-        placeholder:'Digite sua idade (anos)',
-        type: sap.m.InputType.Number
+        placeholder: "Digite sua idade",
+        type: sap.m.InputType.Number,
+        value: "{dados>/formulario/idade}"
     })
-
     const f_altura = new sap.m.Input({
-        placeholder: 'Digite sua altura (m)',
-        type: sap.m.InputType.Number
+        placeholder: "Digite sua altura",
+        type: sap.m.InputType.Number,
+        value: "{dados>/formulario/altura}"
     })
 
     const f_sexo = new sap.m.Select({
+        selectedKey: "{dados>/formulario/sexo}",
         items: [
+
             new sap.ui.core.Item({
-                key: 'M',
-                text: 'Masculino'
+                key: "M",
+                text: "Masculino"
             }),
+
             new sap.ui.core.Item({
-                key:'F',
-                text:'Feminino'
+                key: "F",
+                text: "Feminino"
+            })
+
+        ]
+
+    })
+
+    const tabelaM = new sap.m.Table({
+        columns: [
+            new sap.m.Column({
+                header: new sap.m.Text({
+                    text: "Nome"
+                })
+            }),
+            new sap.m.Column({
+                header: new sap.m.Text({
+                    text: "Idade"
+                })
+            }),
+            new sap.m.Column({
+                header: new sap.m.Text({
+                    text: "Altura"
+                })
+            }),
+            new sap.m.Column({
+                header: new sap.m.Text({
+                    text: "Sexo"
+                })
             })
         ]
+
+    }).bindAggregation("items", {
+        path: "dados>/tabela",
+        template: new sap.m.ColumnListItem({
+
+            cells: [
+                new sap.m.Text({
+                    text: "{dados>Nome}"
+                }),
+                new sap.m.Text({
+                    text: "{dados>Idade}"
+                }),
+                new sap.m.Text({
+                    text: "{dados>Altura}"
+                }),
+                new sap.m.Text({
+                    text: "{dados>Sexo}"
+                })
+            ]
+        })
     })
 
     const tabelaGrid = new sap.ui.table.Table({
         title: "Tabela Grid",
         visibleRowCount: 5,
-        columns: [
-            new sap.ui.table.Column({
-                label: new sap.m.Label({ text: "Nome" }),
-                template: new sap.m.Text()
-            }),
-            new sap.ui.table.Column({
-                label: new sap.m.Label({ text: "Idade" }),
-                template: new sap.m.Text()
-            }),
-            new sap.ui.table.Column({
-                label: new sap.m.Label({ text: "Altura" }),
-                template: new sap.m.Text()
-            }),
-            new sap.ui.table.Column({
-                label: new sap.m.Label({ text: "Sexo" }),
-                template: new sap.m.Text()
-            })
-        ]
-    })
-
-    const table = new sap.m.Table({
-
+        rows: "{dados>/tabela}",
         columns: [
 
-            new sap.m.Column({
-                header: new sap.m.Text({
-                text:'Nome'
+            new sap.ui.table.Column({
+                label: new sap.m.Label({
+                    text: "Nome"
+                }),
+                template: new sap.m.Text({
+                    text: "{dados>Nome}"
                 })
             }),
 
-            new sap.m.Column({
-                header: new sap.m.Text({
-                text:'Idade'
+            new sap.ui.table.Column({
+                label: new sap.m.Label({
+                    text: "Idade"
+                }),
+                template: new sap.m.Text({
+                    text: "{dados>Idade}"
                 })
             }),
 
-            new sap.m.Column({
-                header: new sap.m.Text({
-                text:'Altura'
+            new sap.ui.table.Column({
+                label: new sap.m.Label({
+                    text: "Altura"
+                }),
+                template: new sap.m.Text({
+                    text: "{dados>Altura}"
                 })
             }),
 
-            new sap.m.Column({
-                header: new sap.m.Text({
-                text:'Sexo'
+            new sap.ui.table.Column({
+                label: new sap.m.Label({
+                    text: "Sexo"
+                }),
+                template: new sap.m.Text({
+                    text: "{dados>Sexo}"
                 })
             })
-
         ]
-
     })
 
     const btn_add = new sap.m.Button({
-        type: 'Accept',
-        text: 'Inserir Usuário',
-        width: '100%',
-        icon: 'sap-icon://add-employee',
+        text: "Inserir Usuário",
+        type: "Accept",
+        width: "100%",
+        icon: "sap-icon://add-employee",
 
-        press:()=>{
-            const v_nome = f_nome.getValue()
-            const v_idade = Number(f_idade.getValue())
-            const v_altura = Number(f_altura.getValue())
-            const temp = f_sexo.getSelectedItem()
-            const v_sexo = temp.getText()
+        press: () => {
 
-            if (v_nome === "" || v_idade === "" || v_altura === "") {
-                sap.m.MessageToast.show("Preencha todos os campos!")
+            const formulario = model.getProperty("/formulario")
+
+            if (formulario.nome === "" || formulario.idade === "" || formulario.altura === "") {
+                sap.m.MessageToast.show("Preencha todos os campos")
                 return
             }
 
-            if (v_idade <= 0) {
-                sap.m.MessageToast.show("Informe uma idade válida")
+            if (Number(formulario.idade) <= 0) {
+                sap.m.MessageToast.show("Idade inválida")
                 return
             }
 
-            if (v_altura <= 0) {
-                sap.m.MessageToast.show("Informe uma altura válida")
+            if (Number(formulario.altura) <= 0) {
+                sap.m.MessageToast.show("Altura inválida")
                 return
             }
 
-            const linha = new sap.m.ColumnListItem({
-                cells: [
+            const tabela = model.getProperty("/tabela")
 
-                    new sap.m.Text({
-                        text: v_nome
-                    }),
-
-                    new sap.m.Text({
-                        text: v_idade
-                    }),
-
-                    new sap.m.Text({
-                        text: v_altura
-                    }),
-
-                    new sap.m.Text({
-                        text: v_sexo
-                    })
-
-                ]
-
+            tabela.push({
+                Nome: formulario.nome,
+                Idade: formulario.idade,
+                Altura: formulario.altura,
+                Sexo: formulario.sexo === "M" ? "Masculino" : "Feminino"
             })
 
-            const linhaGrid = new sap.ui.table.Row({
-                cells: [
-                    new sap.m.Text({
-                        text: v_nome 
-                    }),
-                    new sap.m.Text({ 
-                        text: v_idade 
-                    }),
-                    new sap.m.Text({ 
-                        text: v_altura 
-                    }),
-                    new sap.m.Text({
-                        text: v_sexo 
-                    })
-                ]
+            model.refresh()
+            model.setProperty("/formulario", {
+                nome: "",
+                idade: "",
+                altura: "",
+                sexo: "M"
             })
-            tabelaGrid.addRow(linhaGrid)
-
-            table.addItem(linha)
-
-            f_nome.setValue("")
-            f_idade.setValue("")
-            f_altura.setValue("")
-
         }
+    })
 
+    const hBoxTab = new sap.m.HBox({
+    items: [
+        tabelaM,
+        tabelaGrid
+    ],
+    gap: "20px",
+    width: "100%"
     })
 
     const vBox = new sap.m.VBox({
@@ -174,12 +196,10 @@ sap.ui.getCore().attachInit(()=>{
             f_altura,
             f_sexo,
             btn_add,
-            table,
-            tabelaGrid
+            hBoxTab
         ],
-        width: '30%',
-        rowGap: '10px'
-    })
-    
-    vBox.placeAt('conteudo')
+        width: "60%",
+        gap: "10px"
+    }).setModel(model, "dados").placeAt("conteudo")
+
 })
