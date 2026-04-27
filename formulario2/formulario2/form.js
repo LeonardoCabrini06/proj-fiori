@@ -67,10 +67,19 @@ sap.ui.getCore().attachInit(() => {
                 header: new sap.m.Text({
                     text: "Sexo"
                 })
-            })
-        ]
+            }),  
+        ],
+        mode: "Delete",
+        delete: (evt) => {  
 
-    }).bindAggregation("items", {
+            const item = evt.getParameter("listItem").getBindingContext("dados").getPath()
+            const indice = item.split("/").pop()
+            const tab = model.getProperty("/tabela")
+
+            tab.splice(indice,1)
+            model.refresh()
+        }
+        }).bindAggregation("items", {
         path: "dados>/tabela",
         template: new sap.m.ColumnListItem({
 
