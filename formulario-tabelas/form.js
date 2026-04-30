@@ -137,8 +137,27 @@ sap.ui.getCore().attachInit(() => {
                 label: new sap.m.Label({
                     text: "Sexo"
                 }),
-                template: new sap.m.Text({
-                    text: "{dados>Sexo}"
+                template: new sap.m.HBox({
+                    alignItems: sap.m.FlexAlignItems.Center,
+                    justifyContent: sap.m.FlexJustifyContent.SpaceBetw,
+                    columnGap: "20px",
+                    items: [
+                        new sap.m.Text({
+                            text: "{dados>Sexo}"
+                        }),
+                        new sap.ui.core.Icon({
+                            color:"#00008B",
+                            src: "sap-icon://decline",
+                            press:(oEvent)=>{
+                                const path = oEvent.getSource().getBindingContext("dados").getPath()
+                                const index = path.split("/").pop()
+                                const tabGrid = model.getProperty("/tabela")
+
+                                tabGrid.splice(index, 1)
+                                model.refresh()
+                            }
+                        })
+                    ]
                 })
             })
         ]
